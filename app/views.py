@@ -5,8 +5,15 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, redirect, url_for
+import os
+import psycopg2
+from app import app, db
+from flask import render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
+from app.forms import PropertyForm
+# from app.config import filefolder
+from flask import send_from_directory
+from app.models import Property
 
 
 ###
@@ -25,6 +32,44 @@ def about():
     return render_template('about.html', name="Mary Jane")
 
 
+@app.route('/property', methods=['GET', 'POST'])
+def property():
+    form = PropertyForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        title = request.form['title']
+        desc = request.form['desc']
+        rooms = int(request.form['rooms'])
+        bath = int(request.form['bath'])
+        price = float(request.form['price'])
+        type = request.form['type']
+        location = request.form['location']
+        photo = request.files['photo']
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        property = Property(title, rooms, bath, location, price, type, desc, filename)
+        db.session.add(property)
+        db.session.commit()
+        flash('Property information successfully added', 'success')
+        return redirect(url_for('properties'))
+    return render_template('property.html', form=form)
+
+
+@app.route('/properties')
+def properties():
+    prop = Property.query.all()
+    return render_template('properties.html', properties=prop)
+
+
+@app.route("/property/<propertyid>")
+def view_property(propertyid):
+    prop = Property.query.get(propertyid)
+    return render_template('view_property.html', prop=prop)
+
+@app.route('/uploads/<filename>')
+def getimage(filename):
+    rootdir = os.getcwd()
+    return  send_from_directory(os.path.join(rootdir,app.config['UPLOAD_FOLDER']),filename)
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
@@ -37,6 +82,7 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ), 'danger')
+
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
@@ -64,4 +110,4 @@ def page_not_found(error):
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host="0.0.0.0",port="8080")
+    app.run(debug=True, host="0.0.0.0", port="8080")

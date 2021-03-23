@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div class="top">
+    <img src="{{ url_for('getimage', filename=prop.photo) }}" >
+    <div>
+        <h2>{{ prop.title }}</h2>
+        <div class="line1"><span class = "price">{{ "${:,.2f}".format(prop.price) }}</span><span class = "type">{{ prop.type}}</span></div>
+        <p class="line2">{{ prop.description }}</p>
+        <div class="line3">
+            <span>
+            <p><img src="{{ url_for('static', filename='bedroom.png') }}">
+             {{ prop.no_room }} Bedrooms
+                <img src="{{ url_for('static', filename='bathroom.png') }}">
+                {{ prop.no_bathroom }} Bathrooms
+            </p></span>
+            <span>
+                <img src="{{ url_for('static', filename='location.jpeg') }}">
+                {{ prop.location }}
+            </span>
+        </div>
+        <button class="email">Email Realtor</button>
+    </div>
+</div>
+{% endblock %}

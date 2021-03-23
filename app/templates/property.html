@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<div class="property1">
+	<h1>Add New Property</h1>
+	<form method="post" form action="{{ url_for('property') }}" enctype="multipart/form-data">
+		{{ form.csrf_token() }}
+		<span>{{ form.title.label (class='nam')}} <span class= "req">(Required)</span></span>
+		{{ form.title }}
+		<span>{{ form.desc.label (class='nam')}} <span class= "req">(Required)</span></span>
+		{{ form.desc (id='last')}}
+		<div class="form">
+			<div><span>{{ form.rooms.label (class='nam')}} <span class= "req">(Required)</span></span>
+			{{ form.rooms }}</div>
+			<div><span>{{ form.bath.label (class='nam')}} <span class= "req">(Required)</span></span>
+			{{ form.bath }}</div>
+			<div><span>{{ form.price.label (class='nam')}} <span class= "req">(Required)</span></span>
+			{{ form.price }}</div>
+			<div><span>{{ form.type.label (class='nam')}} <span class= "req">(Required)</span></span>
+			{{ form.type }}</div>
+			<div><span>{{ form.location.label (class='nam')}} <span class= "req">(Required)</span></span>
+			{{ form.location }}</div>
+		</div>
+		<span>{{ form.photo.label (class='nam')}} <span class= "req">(Required)</span></span>
+		{{ form.photo }}
+		<span>{{ form.submit (id='btn') }}</span>
+	</form>
+</div>
+{% endblock %}
